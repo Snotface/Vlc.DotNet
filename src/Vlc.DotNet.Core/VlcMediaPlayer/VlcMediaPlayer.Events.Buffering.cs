@@ -11,8 +11,12 @@ namespace Vlc.DotNet.Core
 
         private void OnMediaPlayerBufferingInternal(IntPtr ptr)
         {
-            var args = (VlcEventArg) Marshal.PtrToStructure(ptr, typeof (VlcEventArg));
-            OnMediaPlayerBuffering(args.MediaPlayerBuffering.NewCache);
+#if NET20 || NET35 || NET40 || NET45
+            var args = (VlcEventArg)Marshal.PtrToStructure(ptr, typeof(VlcEventArg));
+#else
+            var args = Marshal.PtrToStructure<VlcEventArg>(ptr);
+#endif
+            OnMediaPlayerBuffering(args.eventArgsUnion.MediaPlayerBuffering.NewCache);
         }
 
         public void OnMediaPlayerBuffering(float newCache)

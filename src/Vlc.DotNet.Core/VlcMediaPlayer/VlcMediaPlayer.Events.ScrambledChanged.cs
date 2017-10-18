@@ -11,8 +11,12 @@ namespace Vlc.DotNet.Core
 
         private void OnMediaPlayerScrambledChangedInternal(IntPtr ptr)
         {
-            var args = (VlcEventArg) Marshal.PtrToStructure(ptr, typeof (VlcEventArg));
-            OnMediaPlayerScrambledChanged(args.MediaPlayerScrambledChanged.NewScrambled);
+#if NET20 || NET35 || NET40 || NET45
+            var args = (VlcEventArg)Marshal.PtrToStructure(ptr, typeof(VlcEventArg));
+#else
+            var args = Marshal.PtrToStructure<VlcEventArg>(ptr);
+#endif
+            OnMediaPlayerScrambledChanged(args.eventArgsUnion.MediaPlayerScrambledChanged.NewScrambled);
         }
 
         public void OnMediaPlayerScrambledChanged(int newScrambled)

@@ -11,8 +11,12 @@ namespace Vlc.DotNet.Core
 
         private void OnMediaPlayerSeekableChangedInternal(IntPtr ptr)
         {
-            var args = (VlcEventArg) Marshal.PtrToStructure(ptr, typeof (VlcEventArg));
-            OnMediaPlayerSeekableChanged(args.MediaPlayerSeekableChanged.NewSeekable);
+#if NET20 || NET35 || NET40 || NET45
+            var args = (VlcEventArg)Marshal.PtrToStructure(ptr, typeof(VlcEventArg));
+#else
+            var args = Marshal.PtrToStructure<VlcEventArg>(ptr);
+#endif
+            OnMediaPlayerSeekableChanged(args.eventArgsUnion.MediaPlayerSeekableChanged.NewSeekable);
         }
 
         public void OnMediaPlayerSeekableChanged(int newSeekable)

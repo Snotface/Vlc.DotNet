@@ -11,8 +11,12 @@ namespace Vlc.DotNet.Core
 
         private void OnMediaPlayerPausableChangedInternal(IntPtr ptr)
         {
-            var args = (VlcEventArg) Marshal.PtrToStructure(ptr, typeof (VlcEventArg));
-            OnMediaPlayerPausableChanged(args.MediaPlayerPausableChanged.NewPausable == 1);
+#if NET20 || NET35 || NET40 || NET45
+            var args = (VlcEventArg)Marshal.PtrToStructure(ptr, typeof(VlcEventArg));
+#else
+            var args = Marshal.PtrToStructure<VlcEventArg>(ptr);
+#endif
+            OnMediaPlayerPausableChanged(args.eventArgsUnion.MediaPlayerPausableChanged.NewPausable == 1);
         }
 
         public void OnMediaPlayerPausableChanged(bool paused)
